@@ -1,0 +1,40 @@
+server:
+  port: 8050
+
+spring:
+  application:
+    name: snail-zuul
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://user:password123@localhost:8761/eureka
+
+logging:
+  level:
+    root: INFO
+
+zuul:
+  ignoredServices: '*'
+  routes:
+    app-a:
+      path: /user/**
+      serviceId: consumer-feign-hystrix
+      
+    app-sidecar:                  #通过sidecar调用nodejs的服务
+      path: /sidecar/**
+      serviceId: sidecar
+      
+      
+#默认会把所有注册在eureka上的微服务都反向代理
+#直接访问：        http://localhost:7900/hello/tony
+#未映射访问（无法访问）： http://localhost:8050/provider-user/hello/tony
+#ZUUL访问：       http://localhost:8050/user/hello/tony
+
+#zuul:
+  #ignoredServices: '*'
+  #routes:
+    #app-a:
+      #path: /user/**
+     #serviceId: provider-user
+
